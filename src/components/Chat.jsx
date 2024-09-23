@@ -14,28 +14,28 @@ const Chat = () => {
     setIsChatFetcherVisible(!isChatFetcherVisible);
   };
 
-
-
   return (
     <div className='chat'>
       <div className="chatInfo">
-        <span>{data.user?.displayName}</span>
-        <div className="chatIcons">
+        <span>{data.user?.displayName || "No Active Chat"}</span>
+       
+       {data.user?.displayName ? <div className="chatIcons">
           <img
-            src={emotional}
-            alt="Camera Icon"
-            onClick={handleCamClick}
-            style={{ cursor: 'pointer' }} // Add pointer cursor for better UX
-          />
-        </div>
+          src={data.user?.displayName ? emotional : null}
+          alt=""
+          onClick={handleCamClick}
+          style={{ cursor: 'pointer' }} // Add pointer cursor for better UX
+        />
+
+        </div> : null}
+        
       </div>
       {isChatFetcherVisible ? (
-        // <ChatFetcher />
         <Navigate to="/chatfetcher" />
       ) : (
         <>
           <Messages />
-          <Input />
+          {data.user?.displayName  && <Input />} {/* Conditionally render Input based on the presence of data.user */}
         </>
       )}
     </div>

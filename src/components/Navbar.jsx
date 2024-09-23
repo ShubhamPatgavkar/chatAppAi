@@ -4,7 +4,7 @@ import { auth } from '../firebase';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import ana from "../img/sentiment-analysis.png";
-import emotional from "../img/emotional.png";
+import info from "../img/info.png";
 
 const Navbar = () => {
   const { currentUser } = useContext(AuthContext);
@@ -24,7 +24,7 @@ const Navbar = () => {
         <div className="loggedUser">
           <img src={currentUser.photoURL} alt="Profile" />
           <span>{currentUser.displayName}</span>
-          <img src={emotional} alt="Sentiment Analysis" className='logo' onClick={handleClick} />
+          <img src={info} alt="Sentiment Analysis" className='logo' onClick={handleClick} />
         </div>
         {/* Logout Button */}
         <button onClick={() => signOut(auth)}>Logout</button>

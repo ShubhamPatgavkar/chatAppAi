@@ -21,32 +21,30 @@ const SelfAnalyzation = () => {
     const sentiment = new Sentiment();
     const navigate = useNavigate();
     const pdfRef = useRef();
-    const [present, SetPresent] = useState(true);
+    
+useEffect(() => {
+    const fetchSelfMessages = () => {
+        if (!currentUser) return;
 
-    useEffect(() => {
-        const fetchSelfMessages = () => {
-            if (!currentUser) return;
+        const selfMessagesRef = doc(db, "selfMessages", currentUser.uid);
 
-            // Fetch the selfMessages document associated with the current user
-            const selfMessagesRef = doc(db, "selfMessages", currentUser.uid);
+        const unsub = onSnapshot(selfMessagesRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const messages = snapshot.data().messages || [];
+                setUserMessages(messages);
+                analyzeSentiments(messages);
 
-            const unsub = onSnapshot(selfMessagesRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const messages = snapshot.data().messages || [];
-                    setUserMessages(messages);
-                    analyzeSentiments(messages);
+            } else {
+                setUserMessages([]);
+                setSentimentResults([]);
+            }
+        });
 
-                } else {
-                    setUserMessages([]);
-                    setSentimentResults([]);
-                }
-            });
+        return () => unsub();
+    };
 
-            return () => unsub();
-        };
-
-        fetchSelfMessages();
-    }, [currentUser]);
+    fetchSelfMessages();
+}, [currentUser]);
 
     const analyzeSentiments = (messages) => {
 
@@ -99,9 +97,9 @@ const SelfAnalyzation = () => {
         navigate(-1); // Go back to the previous page
     };
 
-    if(! sentimentResults.length > 0 ){
-        SetPresent(false);
-    }
+    // if(! sentimentResults.length > 0 ){
+    //     SetPresent(false);
+    // }
 
     return (
         <div className='selfAnalyzation chatsFetched' ref={pdfRef}>
@@ -110,10 +108,10 @@ const SelfAnalyzation = () => {
              <div className="head">
             <h2>Your Messages</h2>
             <img 
-                src={present  ? file : ""} // Set src conditionally
-                alt={sentimentResults.length > 0 ? "Sentiment Analysis" : ""} 
+                src={file } 
+                alt="" 
                 className='logo' 
-                onClick={present > 0 ? handleDownload : null} // Disable click when no messages
+                onClick={handleDownload} 
             />
              </div>
              
