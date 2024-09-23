@@ -1,4 +1,4 @@
-    import React, { useState, useEffect, useContext } from 'react';
+    import React, { useState, useEffect, useContext, useRef } from 'react';
     import { onSnapshot, doc } from 'firebase/firestore';
     import { db } from '../firebase';
     import { AuthContext } from '../context/AuthContext';
@@ -8,6 +8,11 @@
     import '../ChatFetcher.scss'; // Import the SCSS file
     import Back from "../img/back.png";
     import { useNavigate } from 'react-router-dom';
+    import file from '../img/file.png'
+    import html2canvas from 'html2canvas';
+    import jsPDF from 'jspdf';
+
+
 
     const ChatFetcher = () => {
         const [chats, setChats] = useState([]);
@@ -16,6 +21,7 @@
         const { data } = useContext(ChatContext);
         const sentiment = new Sentiment();
         const navigate = useNavigate(); // Initialize the useNavigate hook
+        const pdfRef = useRef();
 
         useEffect(() => {
             const fetchChats = () => {
@@ -57,11 +63,50 @@
             navigate(-1); // Go back to the previous page
         };
 
+      const handleDownload = async () => {
+    const element = pdfRef.current;
+    const canvas = await html2canvas(element, {
+        scale: 2, // Increase scale for better quality
+    });
+    
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+        orientation: 'portrait', // Can also be 'landscape'
+        unit: 'pt',
+        format: 'a4', // A4 paper size
+    });
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+
+    const imgWidth = canvas.width;
+    const imgHeight = canvas.height;
+    
+    // Calculate scaling factor to fit content within one page
+    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+    const imgScaledWidth = imgWidth * ratio;
+    const imgScaledHeight = imgHeight * ratio;
+
+    // Centering the image on the page
+    const xOffset = (pdfWidth - imgScaledWidth) / 2;
+    const yOffset = (pdfHeight - imgScaledHeight) / 2;
+
+    pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgScaledWidth, imgScaledHeight);
+    pdf.save('Chat_analyzation.pdf');
+};
+
+
+
         return (
-            <div className='chatsFetched'>
+            <div className='chatsFetched' ref={pdfRef}>
                 <img className='backIcon' src={Back} alt="back" onClick={handleBack} />
-                <h2>Chat Messages</h2>
-                {sentimentResults.length > 0 ? (
+                <div className="head">
+                     <h2>Chat Messages</h2>
+                 <img src={file} alt="Sentiment Analysis" className='logo' onClick={handleDownload} />
+                </div>
+               
+
+                {sentimentResults.length > 0 ? ( 
                     <>
                         <ul>
                             {sentimentResults.map((chat, index) => (

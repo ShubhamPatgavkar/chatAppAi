@@ -451,7 +451,7 @@
 .loggedUser img {
     width: 40px; // Size of user profile image
     height: 40px;
-    border-radius: 50%; // Make user image circular
+    border-radius: 0; // Make user image circular
     margin-right: 10px; // Space between user image and name
 }
 
@@ -465,9 +465,11 @@
 .loggedUser img:last-child {
      // Set the background of the ana icon to #d8dfe9
     padding: 5px; // Add padding around the icon
-    border-radius: 50%; // Optionally make the icon background circular
+    border-radius: 0; // Optionally make the icon background circular
 }
 
 .home .container .sidebar .navbar .user .logo {
     background-color: #0f1e36;
+    border-radius: 0%;
+    cursor: pointer;
 }

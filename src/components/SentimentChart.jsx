@@ -42,6 +42,7 @@ const SentimentChart = ({ sentimentResults }) => {
 
     // Data for the Scatter plot
     const scatterData = {
+        
         datasets: [
             {
                 label: 'Sentiment Scatter',
